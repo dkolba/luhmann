@@ -1,0 +1,147 @@
+export const snapshot = {};
+
+snapshot[`simpleTemplate isSnapshotMatch 1`] = `
+'<!doctype html>
+  <html lang=en>
+    <head>
+      <meta charset=utf-8>
+      <title>Zettelkasten</title>
+      
+      <style>
+        main {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        
+      </style>
+    </head>
+    <body>
+      <main data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="markdown-body">
+      <span>TEST SPAN TAG</span>
+    </main>
+  </body>
+</html>
+'
+`;
+
+snapshot[`validateDocs isSnapshotMatch 1`] = `
+[
+  {
+    mdContent: "---
+title: A first test title
+author: Boaty McBoatface
+date: 2032-05-21
+teaser: Best test teaser in the industry
+---
+
+## Test Headline 1
+
+An unordered test list
+
+- Test list item 1
+- Test list item 2
+- Test list item 3
+
+An ordered test list
+
+1. Test list item 4
+2. Test list item 5
+3. Test list item 6
+
+### A test subheadling
+
+Some test text",
+    mdName: "test",
+  },
+  {
+    mdContent: "## asdf",
+    mdName: "asdf",
+  },
+]
+`;
+
+snapshot[`simpleSnippet with bare data isSnapshotMatch 1`] = `
+'<section>
+                      <h2><a href="/missing name">missing title</a></h2>
+                      <time datetime="Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time)"></time>
+                      <span>missing teaser</span>
+\\t\\t    </section>'
+`;
+
+snapshot[`simpleSnippet with full data isSnapshotMatch 1`] = `
+'<section>
+                      <h2><a href="/testslug">Test title</a></h2>
+                      <time datetime="Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time)"></time>
+                      <span>Test teaser</span>
+\\t\\t    </section>'
+`;
+
+snapshot[`generateDocument isSnapshotMatch 1`] = `
+{
+  frontmatter: {
+    author: "Boaty McBoatface",
+    date: 2032-05-21T00:00:00.000Z,
+    teaser: "Best test teaser in the industry",
+    title: "A first test title",
+  },
+  markdown: "## Test Headline 1
+
+An unordered test list
+
+- Test list item 1
+- Test list item 2
+- Test list item 3
+
+An ordered test list
+
+1. Test list item 4
+2. Test list item 5
+3. Test list item 6
+
+### A test subheadling
+
+Some test text",
+  mdName: "testdoc.md",
+}
+`;
+
+snapshot[`teaserifyDocs & markupify isSnapshotMatch 1`] = `
+[
+  {
+    frontmatter: {
+      author: "Boaty McBoatface",
+      date: 2032-05-21T00:00:00.000Z,
+      teaser: "Best test teaser in the industry",
+      title: "A first test title",
+    },
+    markdown: "## Test Headline 1
+
+An unordered test list
+
+- Test list item 1
+- Test list item 2
+- Test list item 3
+
+An ordered test list
+
+1. Test list item 4
+2. Test list item 5
+3. Test list item 6
+
+### A test subheadling
+
+Some test text",
+    mdName: "test",
+  },
+]
+`;
+
+snapshot[`teaserifyDocs & markupify isSnapshotMatch 2`] = `
+[
+  '<section>
+                      <h2><a href="/test">A first test title</a></h2>
+                      <time datetime="Fri May 21 2032 02:00:00 GMT+0200 (Central European Summer Time)">21.5.2032</time>
+                      <span>Best test teaser in the industry</span>
+\\t\\t    </section>',
+]
+`;
