@@ -53,11 +53,11 @@ Deno.test(
   async function (t): Promise<void> {
     const body = simpleSnippet({
       date: new Date(
-        "Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time"
+        "Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time",
       ),
     });
     await assertSnapshot(t, body);
-  }
+  },
 );
 
 Deno.test(
@@ -68,11 +68,11 @@ Deno.test(
       title: "Test title",
       teaser: "Test teaser",
       date: new Date(
-        "Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time"
+        "Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time",
       ),
     });
     await assertSnapshot(t, body);
-  }
+  },
 );
 
 Deno.test(
@@ -83,7 +83,7 @@ Deno.test(
       mdContent: frontmatterMarkdownDocument,
     });
     await assertSnapshot(t, document);
-  }
+  },
 );
 
 Deno.test(
@@ -101,5 +101,5 @@ Deno.test(
 
     const markup = teasers.map((teaser) => markupify(teaser, simpleSnippet));
     await assertSnapshot(t, markup);
-  }
+  },
 );

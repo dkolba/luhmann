@@ -27,7 +27,7 @@ export type StyleSheetLinksType = string[];
 type TemplateType = (
   html: string,
   stylesheetlinks: StyleSheetLinksType,
-  css: string
+  css: string,
 ) => string;
 
 type ServeZettelkastenType = {
@@ -54,14 +54,13 @@ type PathHandlerType = HomeHandlerType & {
 export const simpleTemplate = (
   body = "",
   stylesheetlinks: StyleSheetLinksType = [],
-  css = ""
+  css = "",
 ) => {
-  const stylesheets =
-    stylesheetlinks.length > 0
-      ? stylesheetlinks.map(
-          (styl) => `<link rel="stylesheet" href="${styl}" />`
-        )
-      : "";
+  const stylesheets = stylesheetlinks.length > 0
+    ? stylesheetlinks.map(
+      (styl) => `<link rel="stylesheet" href="${styl}" />`,
+    )
+    : "";
 
   return `<!doctype html>
   <html lang=en>
@@ -101,7 +100,7 @@ export const simpleSnippet = ({
 
 export async function validateDocs(
   documentResponses: Response[],
-  documentList: string[]
+  documentList: string[],
 ) {
   const validDocs = [];
   for (const [i, doc] of documentResponses.entries()) {
@@ -163,19 +162,19 @@ const checkStatusCode = (statusCode: number | undefined, resource: string) => {
   // check if status code is 200
   if (statusCode !== 200) {
     throw new Error(
-      `${resource} HTTP status code '${statusCode}' does not equal '200'`
+      `${resource} HTTP status code '${statusCode}' does not equal '200'`,
     );
   }
 };
 
 const checkContentType = (
   contentType: string | null | undefined,
-  resource: string
+  resource: string,
 ) => {
   // check if content-type is not 'text/html', because we expect yaml or markdown
   if (contentType === "text/html") {
     throw new Error(
-      `${resource} HTTP content-type '${contentType}' is invalid`
+      `${resource} HTTP content-type '${contentType}' is invalid`,
     );
   }
 };
@@ -203,7 +202,7 @@ export const generateDocument = ({ mdName, mdContent }: Markdown) => {
 
 export function markupify(
   { mdName, frontmatter }: Frontmatter,
-  snippet: GenericSnippetFunc
+  snippet: GenericSnippetFunc,
 ) {
   const { title, date, teaser } = frontmatter as SnippetType;
   const dateObj = date as Date;
@@ -220,21 +219,21 @@ async function homeHandler({
 }: HomeHandlerType) {
   const sitemapResource = "sitemap.yaml";
   const sitemapResponse = await fetch(`${resource}${sitemapResource}`).catch(
-    handleNetworkError
+    handleNetworkError,
   );
 
   checkResponse(sitemapResponse, sitemapResource);
   checkStatusCode(sitemapResponse?.status, sitemapResource);
   checkContentType(
     sitemapResponse?.headers?.get("Content-Type"),
-    sitemapResource
+    sitemapResource,
   );
 
   const sitemapbody = await sitemapResponse?.text();
 
   const parsedYamlDocList = parse(sitemapbody) as string[];
   const docs = await Promise.all(
-    parsedYamlDocList.map((docname) => fetchArticles(docname, resource))
+    parsedYamlDocList.map((docname) => fetchArticles(docname, resource)),
   );
 
   const validDocs = await validateDocs(docs, parsedYamlDocList);
@@ -260,7 +259,7 @@ export async function pathHandler({
   log.info(`PATHNAME: ${pathname}`);
   const mdName = pathname.substring(1);
   const markdownDocResponse = await fetch(`${resource}${mdName}.md`).catch(
-    handleNetworkError
+    handleNetworkError,
   );
   checkStatusCode(markdownDocResponse?.status, mdName);
 
@@ -405,8 +404,8 @@ export async function serveZettelkasten({
             stylesheetlinks,
             css,
             resource: zettelResource,
-          }).catch(handleErrorResponse)
-        )
+          }).catch(handleErrorResponse),
+        ),
       ).catch((err) => {
         // TODO: How to handle this error?
         log.critical(`Refreshed too fast...🏎️ : ${err}`);
@@ -422,7 +421,7 @@ export async function serveZettelkasten({
             "content-type": "text/html",
           }),
           status: 404,
-        })
+        }),
       ).catch((err) => {
         log.critical(`Refreshed favicon too fast...🏎️ : ${err}`);
       });
@@ -439,8 +438,8 @@ export async function serveZettelkasten({
             stylesheetlinks,
             css,
             resource: zettelResource,
-          }).catch(handleErrorResponse)
-        )
+          }).catch(handleErrorResponse),
+        ),
       ).catch((err) => {
         // TODO: How to handle this error?
         log.critical(`Refreshed too fast, too furious...🏎️ 🚙 : ${err}`);

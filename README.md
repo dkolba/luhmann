@@ -1,10 +1,12 @@
 # LUHMANN
 
-A lightweight Deno library to dynamically generate a full website from a markdown Zettelkasten.
+A lightweight Deno library to dynamically generate a full website from a
+markdown Zettelkasten.
 
 ## WHAT?
 
-Luhmann fetches markdown files from somewhere on the internet and converts them to a website.
+Luhmann fetches markdown files from somewhere on the internet and converts them
+to a website.
 
 ## GETTING STARTED
 
@@ -19,7 +21,6 @@ console.log(`HTTP webserver running.  Access it at:  http://localhost:8080/`);
 for await (const conn of server) {
   serveZettelkastenn, zettelResource });
 }
-
 ```
 
 ### TESTS
