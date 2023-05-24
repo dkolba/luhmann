@@ -63,7 +63,7 @@ Some test text",
 snapshot[`simpleSnippet with bare data isSnapshotMatch 1`] = `
 '<section>
                       <h2><a href="/missing name">missing title</a></h2>
-                      <time datetime="Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time)"></time>
+                      <time datetime="Mon, 22 May 2023 19:57:18 GMT"></time>
                       <span>missing teaser</span>
 \\t\\t    </section>'
 `;
@@ -71,7 +71,7 @@ snapshot[`simpleSnippet with bare data isSnapshotMatch 1`] = `
 snapshot[`simpleSnippet with full data isSnapshotMatch 1`] = `
 '<section>
                       <h2><a href="/testslug">Test title</a></h2>
-                      <time datetime="Mon May 22 2023 21:57:18 GMT+0200 (Central European Summer Time)"></time>
+                      <time datetime="Mon, 22 May 2023 19:57:18 GMT"></time>
                       <span>Test teaser</span>
 \\t\\t    </section>'
 `;
@@ -140,7 +140,7 @@ snapshot[`teaserifyDocs & markupify isSnapshotMatch 2`] = `
 [
   '<section>
                       <h2><a href="/test">A first test title</a></h2>
-                      <time datetime="Fri May 21 2032 02:00:00 GMT+0200 (Central European Summer Time)">21.5.2032</time>
+                      <time datetime="Fri, 21 May 2032 00:00:00 GMT">21.5.2032</time>
                       <span>Best test teaser in the industry</span>
 \\t\\t    </section>',
 ]
