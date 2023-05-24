@@ -34,3 +34,6 @@ jobs:
 
       - run: deno task test
         working-directory: ./example
+      - run: ls
+        working-directory: ./example
+      - run: ls
