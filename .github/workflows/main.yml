@@ -20,6 +20,7 @@ jobs:
         with:
           path: ${{ env.DENO_DIR }}
           key: my_cache_key
+          working-directory: ./example
       - uses: denoland/setup-deno@v1.1.1
         with:
           deno-version: v1.x # Run with latest stable Deno.
