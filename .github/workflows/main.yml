@@ -1,7 +1,7 @@
 name: Build
 
 env:
-  DENO_DIR: ${{ github.workspace }}/my_cache_directory
+  DENO_DIR: ${{ github.workspace }}/deno_cache_directory
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.DENO_DIR }}
-          key: my_cache_key
+          key: ${{ hashFiles('deno.lock') }}
       - uses: denoland/setup-deno@v1.1.1
         with:
           deno-version: v1.x # Run with latest stable Deno.
@@ -33,5 +33,3 @@ jobs:
 
       - run: deno task test
         working-directory: ./example
-      - run: ls
-      - run: ls ${{ github.workspace }}/my_cache_directory
