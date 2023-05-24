@@ -25,11 +25,11 @@ jobs:
           deno-version: v1.x # Run with latest stable Deno.
       # Check if the code is formatted according to Deno's default
       # formatting conventions.
-      - run: deno fmt --check --ignore=${{ github.workspace }}/my_cache_directory
+      - run: deno fmt --check --ignore=$DENO_DIR
 
       # Scan the code for syntax errors and style issues. If
       # you want to use a custom linter configuration you can add a configuration file with --config <myconfig>
-      - run: deno lint --ignore=${{ github.workspace }}/my_cache_directory
+      - run: deno lint --ignore=$DENO_DIR
 
       - run: deno task test
         working-directory: ./example
