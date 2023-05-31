@@ -276,7 +276,10 @@ export async function pathHandler({
     mdContent,
   };
   const document = generateDocument(mdDoc);
-  const markup = markupify(document, snippet) + render(document.markdown);
+  const markup = markupify(document, snippet) +
+    render(document.markdown, {
+      mediaBaseUrl: resource,
+    });
   const headers = new Headers({
     "content-type": "text/html",
   });
