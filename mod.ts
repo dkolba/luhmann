@@ -245,7 +245,7 @@ async function homeHandler({
   const validDocs = await validateDocs(docs, parsedYamlDocList);
   const teasers = await teaserifyDocs(validDocs);
   const allSnippets = teasers.map((teaser) => markupify(teaser, snippet));
-  const body = template(allSnippets?.toString(), stylesheetlinks, css);
+  const body = template(allSnippets?.join(""), stylesheetlinks, css);
   // back to the client.
 
   const headers = new Headers({

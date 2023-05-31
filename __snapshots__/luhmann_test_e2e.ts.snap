@@ -21,7 +21,7 @@ snapshot[`e2e isSnapshotMatch 1`] = `
                       <h2><a href="/test_zettel_1">A first test title</a></h2>
                       <time datetime="Fri, 21 May 2032 00:00:00 GMT">21.5.2032</time>
                       <span>Best test teaser in the industry</span>
-\\t\\t    </section>,<section>
+\\t\\t    </section><section>
                       <h2><a href="/test_zettel_2">A second test title</a></h2>
                       <time datetime="Sat, 22 May 2032 00:00:00 GMT">22.5.2032</time>
                       <span>Second best test teaser in the industry</span>
