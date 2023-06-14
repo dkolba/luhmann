@@ -279,12 +279,10 @@ export async function pathHandler({
       mediaBaseUrl: resource,
     });
   const body = template(markup?.toString(), stylesheetlinks, css);
-  const etag = await calculate(body);
 
   const headers = new Headers({
     "content-type": "text/html",
   });
-  etag && headers.append("etag", etag);
   return { body, headers, status: 200 };
 }
 
@@ -301,6 +299,8 @@ async function reply(
   },
 ) {
   const bodyEtag = await calculate(body);
+  console.log("bodyEtag : ", bodyEtag);
+  console.log("ifNoneMatch: ", ifNoneMatch);
   if (`W/${bodyEtag}` === ifNoneMatch) {
     return new Response(null, {
       headers: headers,
@@ -308,6 +308,8 @@ async function reply(
     });
   }
 
+  const etag = await calculate(body);
+  etag && headers.append("etag", etag);
   return new Response(body, {
     headers: headers,
     status,
