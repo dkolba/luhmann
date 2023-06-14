@@ -1,7 +1,7 @@
 ---
 title: A second test title
 author: Boaty McBoatface
-date: 2032-05-22
+date: 2001-12-24
 teaser: Second best test teaser in the industry
 ---
 

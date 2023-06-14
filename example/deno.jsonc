@@ -1,7 +1,7 @@
 {
   "tasks": {
     "dev": "deno run --allow-env --allow-net --allow-read --watch server.ts",
-    "format": "deno fmt ../luhmann.ts ../luhmann_test.ts",
+    "format": "deno fmt ../mod.ts ../luhmann_test.ts",
     "file_server": "deno run --allow-read --allow-net https://deno.land/std@0.188.0/http/file_server.ts static",
     "update_snapshots": "deno test --allow-all ../luhmann_test.ts -- --update",
     "update_snapshots_e2e": "deno test --allow-all ../luhmann_test_e2e.ts -- --update",

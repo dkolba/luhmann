@@ -1,7 +1,4 @@
-import { render } from "./deps.ts";
-import { parse } from "./deps.ts";
-import { extract, test } from "./deps.ts";
-import { log } from "./deps.ts";
+import { calculate, extract, log, parse, render, test } from "./deps.ts";
 
 export type SnippetType = {
   mdName?: string;
@@ -93,10 +90,11 @@ export const simpleSnippet = ({
   teaser = "missing teaser",
 }: SnippetType) =>
   `<section>
-                      <h2><a href="/${mdName}">${title}</a></h2>
-                      <time datetime="${date.toUTCString()}">${dateStamp}</time>
-                      <span>${teaser}</span>
-		    </section>`;
+     <h2><a href="/${mdName}">${title}</a></h2>
+     <time datetime="${date.toUTCString()}">${dateStamp}</time>
+     <span>${teaser}</span>
+     <span> - </span><time datetime="${date.toUTCString()}">${date.getFullYear()}/${date.getMonth()}/${date.getDay()}</time>
+	</section>`;
 
 export async function validateDocs(
   documentResponses: Response[],
@@ -280,22 +278,36 @@ export async function pathHandler({
     render(document.markdown, {
       mediaBaseUrl: resource,
     });
+  const body = template(markup?.toString(), stylesheetlinks, css);
+  const etag = await calculate(body);
+
   const headers = new Headers({
     "content-type": "text/html",
   });
-  const body = template(markup?.toString(), stylesheetlinks, css);
+  etag && headers.append("etag", etag);
   return { body, headers, status: 200 };
 }
 
-function reply({
-  body,
-  headers,
-  status,
-}: {
-  body: string;
-  headers: Headers;
-  status: number;
-}) {
+async function reply(
+  ifNoneMatch: string | null,
+  {
+    body,
+    headers,
+    status,
+  }: {
+    body: string;
+    headers: Headers;
+    status: number;
+  },
+) {
+  const bodyEtag = await calculate(body);
+  if (`W/${bodyEtag}` === ifNoneMatch) {
+    return new Response(null, {
+      headers: headers,
+      status: 304,
+    });
+  }
+
   return new Response(body, {
     headers: headers,
     status,
@@ -403,10 +415,12 @@ export async function serveZettelkasten({
   // iterator from the HTTP connection.
   for await (const { request, respondWith } of httpConn) {
     const { pathname } = new URL(request.url);
+    const ifNoneMatch = request.headers.get("if-none-match");
     if (pathname === "/") {
       log.info("Home route '/' was called");
       respondWith(
         reply(
+          ifNoneMatch,
           await homeHandler({
             template,
             snippet,
@@ -424,7 +438,7 @@ export async function serveZettelkasten({
       log.info("Favicon route '/favicon.ico' was called");
       // TODO: Deliver favicon
       respondWith(
-        reply({
+        reply(ifNoneMatch, {
           body: "404",
           headers: new Headers({
             "content-type": "text/html",
@@ -440,6 +454,7 @@ export async function serveZettelkasten({
       log.info(`Path route '${pathname}' was called`);
       respondWith(
         reply(
+          ifNoneMatch,
           await pathHandler({
             pathname,
             template,
