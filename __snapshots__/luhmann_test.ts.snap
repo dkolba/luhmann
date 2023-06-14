@@ -62,18 +62,20 @@ Some test text",
 
 snapshot[`simpleSnippet with bare data isSnapshotMatch 1`] = `
 '<section>
-                      <h2><a href="/missing name">missing title</a></h2>
-                      <time datetime="Mon, 22 May 2023 19:57:18 GMT"></time>
-                      <span>missing teaser</span>
-\\t\\t    </section>'
+     <h2><a href="/missing name">missing title</a></h2>
+     <time datetime="Mon, 22 May 2023 19:57:18 GMT"></time>
+     <span>missing teaser</span>
+     <span> - </span><time datetime="Mon, 22 May 2023 19:57:18 GMT">2023/4/1</time>
+\\t</section>'
 `;
 
 snapshot[`simpleSnippet with full data isSnapshotMatch 1`] = `
 '<section>
-                      <h2><a href="/testslug">Test title</a></h2>
-                      <time datetime="Mon, 22 May 2023 19:57:18 GMT"></time>
-                      <span>Test teaser</span>
-\\t\\t    </section>'
+     <h2><a href="/testslug">Test title</a></h2>
+     <time datetime="Mon, 22 May 2023 19:57:18 GMT"></time>
+     <span>Test teaser</span>
+     <span> - </span><time datetime="Mon, 22 May 2023 19:57:18 GMT">2023/4/1</time>
+\\t</section>'
 `;
 
 snapshot[`generateDocument isSnapshotMatch 1`] = `
@@ -139,9 +141,10 @@ Some test text",
 snapshot[`teaserifyDocs & markupify isSnapshotMatch 2`] = `
 [
   '<section>
-                      <h2><a href="/test">A first test title</a></h2>
-                      <time datetime="Fri, 21 May 2032 00:00:00 GMT">21.5.2032</time>
-                      <span>Best test teaser in the industry</span>
-\\t\\t    </section>',
+     <h2><a href="/test">A first test title</a></h2>
+     <time datetime="Fri, 21 May 2032 00:00:00 GMT">21.5.2032</time>
+     <span>Best test teaser in the industry</span>
+     <span> - </span><time datetime="Fri, 21 May 2032 00:00:00 GMT">2032/4/5</time>
+\\t</section>',
 ]
 `;
