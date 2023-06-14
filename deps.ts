@@ -5,3 +5,4 @@ export {
   test,
 } from "https://deno.land/std@0.186.0/front_matter/yaml.ts";
 export * as log from "https://deno.land/std@0.186.0/log/mod.ts";
+export { calculate } from "https://deno.land/std@0.186.0/http/etag.ts";
