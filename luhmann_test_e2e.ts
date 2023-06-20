@@ -5,7 +5,7 @@ const baseFileUrl = " http://localhost:4507/";
 const baseTestUrl = "http://localhost:8080/";
 const sitemapResource = "sitemap.yaml";
 
-Deno.test("e2e isEtagHit", async function (t): Promise<void> {
+Deno.test("e2e isEtagHit", async function (): Promise<void> {
   // Get the homepage the first time
   const homePageResponse = await fetch(baseTestUrl);
   // Dispose of the response to prevent a 'leaking resources' error

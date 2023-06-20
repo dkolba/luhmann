@@ -445,7 +445,7 @@ export async function serveZettelkasten({
     const ifNoneMatch = request.headers.get("if-none-match");
 
     if (keyValueStore && kv && ttl) {
-      const { key, value } = await kv.get<DocMeta>([pathname]);
+      const { value } = await kv.get<DocMeta>([pathname]);
       if (value) {
         const { timestamp, etag, body } = value;
 
