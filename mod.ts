@@ -1,5 +1,11 @@
 import { calculate, extract, log, parse, render, test } from "./deps.ts";
 
+type DocMeta = {
+  etag: string;
+  timestamp: number;
+  body: string;
+};
+
 export type SnippetType = {
   mdName?: string;
   title?: string;
@@ -34,6 +40,8 @@ type ServeZettelkastenType = {
   stylesheetlinks?: StyleSheetLinksType;
   css?: string;
   zettelResource: string;
+  keyValueStore: string;
+  ttl: number;
 };
 
 type HomeHandlerType = {
@@ -288,6 +296,8 @@ export async function pathHandler({
 
 async function reply(
   ifNoneMatch: string | null,
+  pathname: string,
+  kv: Deno.Kv | undefined,
   {
     body,
     headers,
@@ -299,8 +309,15 @@ async function reply(
   },
 ) {
   const bodyEtag = await calculate(body);
-  console.log("bodyEtag : ", bodyEtag);
-  console.log("ifNoneMatch: ", ifNoneMatch);
+  if (kv) {
+    log.info("Will cache in KV");
+    kv.set([pathname], {
+      etag: `W/${bodyEtag}`,
+      timestamp: Number(new Date().getTime()),
+      body,
+    });
+  }
+
   if (`W/${bodyEtag}` === ifNoneMatch) {
     return new Response(null, {
       headers: headers,
@@ -308,8 +325,7 @@ async function reply(
     });
   }
 
-  const etag = await calculate(body);
-  etag && headers.append("etag", etag);
+  bodyEtag && headers.append("etag", bodyEtag);
   return new Response(body, {
     headers: headers,
     status,
@@ -409,20 +425,65 @@ export async function serveZettelkasten({
   stylesheetlinks = [],
   css = "",
   zettelResource,
+  keyValueStore = "ENABLE",
+  ttl,
 }: ServeZettelkastenType) {
   // TODO: Throw error if zettelResource is undefined
   // This "upgrades" a network connection into an HTTP connection.
   const httpConn = Deno.serveHttp(conn);
   // Each request sent over the HTTP connection will be yielded as an async
   // iterator from the HTTP connection.
+
+  // Needed until Deno KV is not longer considered experimental and behind --unstable flag
+  let kv: Deno.Kv | undefined;
+  if (keyValueStore === "ENABLE") {
+    kv = await Deno.openKv();
+  }
+
   for await (const { request, respondWith } of httpConn) {
     const { pathname } = new URL(request.url);
     const ifNoneMatch = request.headers.get("if-none-match");
+
+    if (keyValueStore && kv && ttl) {
+      const { value } = await kv.get<DocMeta>([pathname]);
+      if (value) {
+        const { timestamp, etag, body } = value;
+
+        const isKVCacheHit = timestamp + ttl > Number(new Date().getTime());
+
+        if (ifNoneMatch === etag && isKVCacheHit) {
+          log.info("Hit Etag in KV");
+          respondWith(
+            new Response(null, {
+              headers: new Headers({}),
+              status: 304,
+            }),
+          );
+          continue;
+        }
+        if (isKVCacheHit) {
+          log.info("Hit body in KV");
+          respondWith(
+            new Response(body, {
+              headers: new Headers({
+                "content-type": "text/html",
+                "etag": etag,
+              }),
+              status: 200,
+            }),
+          );
+          continue;
+        }
+      }
+    }
+
     if (pathname === "/") {
       log.info("Home route '/' was called");
       respondWith(
         reply(
           ifNoneMatch,
+          pathname,
+          kv,
           await homeHandler({
             template,
             snippet,
@@ -440,7 +501,7 @@ export async function serveZettelkasten({
       log.info("Favicon route '/favicon.ico' was called");
       // TODO: Deliver favicon
       respondWith(
-        reply(ifNoneMatch, {
+        reply(ifNoneMatch, pathname, kv, {
           body: "404",
           headers: new Headers({
             "content-type": "text/html",
@@ -452,11 +513,12 @@ export async function serveZettelkasten({
       });
     }
     if (pathname !== "/" && pathname !== "/favicon.ico") {
-      console.info("PATH was: ", pathname);
       log.info(`Path route '${pathname}' was called`);
       respondWith(
         reply(
           ifNoneMatch,
+          pathname,
+          kv,
           await pathHandler({
             pathname,
             template,
