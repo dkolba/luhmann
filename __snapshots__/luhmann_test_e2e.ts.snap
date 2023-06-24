@@ -14,6 +14,7 @@ snapshot[`e2e isSnapshotMatch 1`] = `
         }
         
       </style>
+      <script type="module" src="http://localhost:4507/welcome.js"></script>
     </head>
     <body>
       <main data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="markdown-body">
@@ -48,6 +49,7 @@ snapshot[`e2e isSnapshotMatch 2`] = `
         }
         
       </style>
+      <script type="module" src="http://localhost:4507/welcome.js"></script>
     </head>
     <body>
       <main data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="markdown-body">
@@ -90,6 +92,7 @@ snapshot[`e2e isSnapshotMatch 3`] = `
         }
         
       </style>
+      <script type="module" src="http://localhost:4507/welcome.js"></script>
     </head>
     <body>
       <main data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="markdown-body">

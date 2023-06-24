@@ -14,6 +14,7 @@ snapshot[`simpleTemplate isSnapshotMatch 1`] = `
         }
         
       </style>
+      
     </head>
     <body>
       <main data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="markdown-body">
