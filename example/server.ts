@@ -7,7 +7,7 @@ const zettelResource = Deno.env.get("ZETTELKASTEN") || "";
 const stylesheetlinks = [`${zettelResource}paper.css`];
 
 const server = Deno.listen({ port: Number(Deno.env.get("PORT")) || 8080 });
-const keyValueStore = "ENABLE";
+const keyValueStore = Deno.env.get("KV") || "DISABLE";
 const ttl = 5000;
 console.log(`HTTP webserver running.  Access it at:  http://localhost:8080/`);
 

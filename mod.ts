@@ -388,11 +388,11 @@ const smash = {
 const handleErrorResponse = (err: Error) => {
   const { name, message, cause } = err;
   // TODO: remove
-  log.error(`MSTR - caught this error: ${err}`);
-  log.error(`MSTR - error name: ${name}`);
-  log.error(`MSTR - error msg: ${message}`);
-  log.error(`MSTR - error cause: ${cause}`);
-  log.error(`MSTR - error all: ${err}`);
+  log.error(`ERROR - caught this error: ${err}`);
+  log.error(`ERROR - error name: ${name}`);
+  log.error(`ERROR - error msg: ${message}`);
+  log.error(`ERROR - error cause: ${cause}`);
+  log.error(`ERROR - error all: ${err}`);
   switch (true) {
     // TODO: remove
     case err.cause === "Felt sick":
@@ -425,7 +425,7 @@ export async function serveZettelkasten({
   stylesheetlinks = [],
   css = "",
   zettelResource,
-  keyValueStore = "ENABLE",
+  keyValueStore = "DISABLE",
   ttl,
 }: ServeZettelkastenType) {
   // TODO: Throw error if zettelResource is undefined
@@ -433,10 +433,12 @@ export async function serveZettelkasten({
   const httpConn = Deno.serveHttp(conn);
   // Each request sent over the HTTP connection will be yielded as an async
   // iterator from the HTTP connection.
-
   // Needed until Deno KV is not longer considered experimental and behind --unstable flag
   let kv: Deno.Kv | undefined;
-  if (keyValueStore === "ENABLE") {
+
+  const kvIsEnabled = keyValueStore === "ENABLE";
+
+  if (kvIsEnabled) {
     kv = await Deno.openKv();
   }
 
@@ -444,7 +446,7 @@ export async function serveZettelkasten({
     const { pathname } = new URL(request.url);
     const ifNoneMatch = request.headers.get("if-none-match");
 
-    if (keyValueStore && kv && ttl) {
+    if (kvIsEnabled && kv && ttl) {
       const { value } = await kv.get<DocMeta>([pathname]);
       if (value) {
         const { timestamp, etag, body } = value;
