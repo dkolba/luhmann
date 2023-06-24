@@ -5,6 +5,8 @@ const css = "";
 
 const zettelResource = Deno.env.get("ZETTELKASTEN") || "";
 const stylesheetlinks = [`${zettelResource}paper.css`];
+const scripttaglinks = [`${zettelResource}welcome.js`];
+console.log("scripttaglinks: ", scripttaglinks);
 
 const server = Deno.listen({ port: Number(Deno.env.get("PORT")) || 8080 });
 const keyValueStore = Deno.env.get("KV") || "DISABLE";
@@ -23,5 +25,6 @@ for await (const conn of server) {
     zettelResource,
     keyValueStore,
     ttl,
+    scripttaglinks,
   });
 }

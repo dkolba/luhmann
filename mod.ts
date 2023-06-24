@@ -25,45 +25,55 @@ type Frontmatter = {
   frontmatter: Record<string, unknown>;
 };
 
-export type StyleSheetLinksType = string[];
+export type ExternalLinksType = string[];
 
 type TemplateType = (
   html: string,
-  stylesheetlinks: StyleSheetLinksType,
-  css: string,
+  stylesheetlinks?: ExternalLinksType,
+  css?: string,
+  scripttaglinkslinks?: ExternalLinksType,
 ) => string;
 
 type ServeZettelkastenType = {
   conn: Deno.Conn;
   template?: TemplateType;
   snippet?: GenericSnippetFunc;
-  stylesheetlinks?: StyleSheetLinksType;
+  stylesheetlinks?: ExternalLinksType;
   css?: string;
   zettelResource: string;
   keyValueStore: string;
   ttl: number;
+  scripttaglinks?: ExternalLinksType;
 };
 
 type HomeHandlerType = {
   template: TemplateType;
   snippet: GenericSnippetFunc;
-  stylesheetlinks: StyleSheetLinksType;
+  stylesheetlinks: ExternalLinksType;
   css: string;
   resource: string;
+  scripttaglinks?: ExternalLinksType;
 };
 
 type PathHandlerType = HomeHandlerType & {
   pathname: string;
 };
 
-export const simpleTemplate = (
+export const simpleTemplate = <TemplateType>(
   body = "",
-  stylesheetlinks: StyleSheetLinksType = [],
+  stylesheetlinks: ExternalLinksType = [],
   css = "",
+  scripttaglinks: ExternalLinksType = [],
 ) => {
   const stylesheets = stylesheetlinks.length > 0
     ? stylesheetlinks.map(
       (styl) => `<link rel="stylesheet" href="${styl}" />`,
+    )
+    : "";
+
+  const scripttags = scripttaglinks.length > 0
+    ? scripttaglinks.map(
+      (script) => `<script type="module" src="${script}"></script>`,
     )
     : "";
 
@@ -80,6 +90,7 @@ export const simpleTemplate = (
         }
         ${css}
       </style>
+      ${scripttags}
     </head>
     <body>
       <main data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="markdown-body">
@@ -228,6 +239,7 @@ async function homeHandler({
   stylesheetlinks,
   css,
   resource,
+  scripttaglinks,
 }: HomeHandlerType) {
   const sitemapResource = "sitemap.yaml";
   const sitemapResponse = await fetch(`${resource}${sitemapResource}`).catch(
@@ -251,7 +263,12 @@ async function homeHandler({
   const validDocs = await validateDocs(docs, parsedYamlDocList);
   const teasers = await teaserifyDocs(validDocs);
   const allSnippets = teasers.map((teaser) => markupify(teaser, snippet));
-  const body = template(allSnippets?.join(""), stylesheetlinks, css);
+  const body = template(
+    allSnippets?.join(""),
+    stylesheetlinks,
+    css,
+    scripttaglinks,
+  );
   // back to the client.
 
   const headers = new Headers({
@@ -267,6 +284,7 @@ export async function pathHandler({
   stylesheetlinks,
   css,
   resource,
+  scripttaglinks,
 }: PathHandlerType) {
   log.info(`PATHNAME: ${pathname}`);
   const mdName = pathname.substring(1);
@@ -286,7 +304,12 @@ export async function pathHandler({
     render(document.markdown, {
       mediaBaseUrl: resource,
     });
-  const body = template(markup?.toString(), stylesheetlinks, css);
+  const body = template(
+    markup?.toString(),
+    stylesheetlinks,
+    css,
+    scripttaglinks,
+  );
 
   const headers = new Headers({
     "content-type": "text/html",
@@ -427,6 +450,7 @@ export async function serveZettelkasten({
   zettelResource,
   keyValueStore = "DISABLE",
   ttl,
+  scripttaglinks = [],
 }: ServeZettelkastenType) {
   // TODO: Throw error if zettelResource is undefined
   // This "upgrades" a network connection into an HTTP connection.
@@ -492,6 +516,7 @@ export async function serveZettelkasten({
             stylesheetlinks,
             css,
             resource: zettelResource,
+            scripttaglinks,
           }).catch(handleErrorResponse),
         ),
       ).catch((err) => {
@@ -528,6 +553,7 @@ export async function serveZettelkasten({
             stylesheetlinks,
             css,
             resource: zettelResource,
+            scripttaglinks,
           }).catch(handleErrorResponse),
         ),
       ).catch((err) => {
